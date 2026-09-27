@@ -25,6 +25,22 @@ class Provider::AnthropicTest < ActiveSupport::TestCase
     assert_equal "Custom Anthropic-compatible (https://bedrock.example.com/anthropic)", custom.provider_name
   end
 
+  test "initialize passes api_key to the Anthropic client by default" do
+    ::Anthropic::Client.expects(:new).with do |opts|
+      opts[:api_key] == "test-token" && !opts.key?(:auth_token)
+    end.returns(stub)
+
+    Provider::Anthropic.new("test-token")
+  end
+
+  test "initialize passes auth_token to the Anthropic client when oauth: true" do
+    ::Anthropic::Client.expects(:new).with do |opts|
+      opts[:auth_token] == "test-oauth-token" && !opts.key?(:api_key)
+    end.returns(stub)
+
+    Provider::Anthropic.new("test-oauth-token", oauth: true)
+  end
+
   test "supports_model? returns true for claude prefix" do
     assert @subject.supports_model?("claude-sonnet-4-6")
     assert @subject.supports_model?("claude-opus-4-7")

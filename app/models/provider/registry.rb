@@ -93,7 +93,9 @@ class Provider::Registry
       end
 
       def anthropic
-        access_token = ENV["ANTHROPIC_ACCESS_TOKEN"].presence ||
+        oauth_token = ENV["ANTHROPIC_OAUTH_TOKEN"].presence
+        access_token = oauth_token ||
+                       ENV["ANTHROPIC_ACCESS_TOKEN"].presence ||
                        ENV["ANTHROPIC_API_KEY"].presence ||
                        Setting.anthropic_access_token
 
@@ -102,7 +104,7 @@ class Provider::Registry
         base_url = ENV["ANTHROPIC_BASE_URL"].presence || Setting.anthropic_base_url
         model = ENV["ANTHROPIC_MODEL"].presence || Setting.anthropic_model
 
-        Provider::Anthropic.new(access_token, base_url: base_url, model: model)
+        Provider::Anthropic.new(access_token, base_url: base_url, model: model, oauth: oauth_token.present?)
       end
 
       def jev

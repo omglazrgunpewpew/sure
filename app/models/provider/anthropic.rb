@@ -25,8 +25,8 @@ class Provider::Anthropic < Provider
       Setting.anthropic_access_token.present?
   end
 
-  def initialize(access_token, base_url: nil, model: nil)
-    client_options = { api_key: access_token }
+  def initialize(access_token, base_url: nil, model: nil, oauth: false)
+    client_options = oauth ? { auth_token: access_token } : { api_key: access_token }
     client_options[:base_url] = base_url if base_url.present?
     client_options[:timeout] = ENV.fetch("ANTHROPIC_REQUEST_TIMEOUT", 600).to_i
 

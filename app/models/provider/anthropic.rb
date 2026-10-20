@@ -20,6 +20,7 @@ class Provider::Anthropic < Provider
   end
 
   def self.configured?
+    ENV["ANTHROPIC_OAUTH_TOKEN"].present? ||
     ENV["ANTHROPIC_ACCESS_TOKEN"].present? ||
       ENV["ANTHROPIC_API_KEY"].present? ||
       Setting.anthropic_access_token.present?
